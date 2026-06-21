@@ -204,7 +204,6 @@ return`<button class="option ${sel}" data-i="${i}">${opt}</button>`
 }).join('');
 document.querySelectorAll('.option').forEach(btn=>{
 btn.addEventListener('click',()=>{
-if(answers[cur]!==null)return;
 const i=+btn.dataset.i;
 answers[cur]=i;
 document.querySelectorAll('.option').forEach(b=>b.classList.remove('selected'));
