@@ -169,6 +169,17 @@ const questions=[
 {q:"Желідегі деректер пакеті (PDU) Каналдық деңгейде қалай аталады?",o:["A) Сегмент (Segment)","B) Пакет (Packet)","C) Кадр немесе Фрейм (Frame)","D) Бит (Bit)"],a:2},
 {q:"127.0.0.1 IP мекенжайы не үшін қолданылады?",o:["A) Желідегі басты серверге қосылу үшін","B) Компьютердің өзін-өзі (желілік стек жұмысын) тексеру үшін (Loopback)","C) Провайдерге хабарласу үшін","D) Сымсыз желіні іске қосу үшін"],a:1}
 ];
+function shuffleArray(arr){for(let i=arr.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[arr[i],arr[j]]=[arr[j],arr[i]]}return arr}
+shuffleArray(questions);
+questions.forEach(q=>{
+const correct=q.o[q.a];
+const texts=q.o.map(t=>t.replace(/^[A-D]\)\s*/,''));
+const indices=texts.map((_,i)=>i);
+for(let i=indices.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[indices[i],indices[j]]=[indices[j],indices[i]]}
+const labels=["A) ","B) ","C) ","D) "];
+q.o=indices.map((idx,i)=>labels[i]+texts[idx]);
+q.a=indices.indexOf(q.a);
+});
 let cur=0,answers=new Array(60).fill(null);
 const $=id=>document.getElementById(id);
 const screens={start:$('screen-start'),test:$('screen-test'),results:$('screen-results')};
