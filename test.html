@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<title>Компьютерлік желілер тесті</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700;800&display=swap');
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow-x:hidden}
+body{
+font-family:'JetBrains Mono',monospace;
+background:#0a0a0a;
+color:#e0e0e0;
+display:flex;justify-content:center;align-items:center;
+min-height:100vh;padding:16px;
+background-image:radial-gradient(ellipse at 50% 0%,rgba(0,255,65,.03) 0%,transparent 60%);
+}
+#app{width:100%;max-width:580px;margin:0 auto;position:relative}
+.screen{display:none;flex-direction:column;gap:16px}
+.screen.active{display:flex}
+#app::after{content:'';position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:9999;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,255,65,.015) 2px,rgba(0,255,65,.015) 4px)}
+@keyframes flicker{0%,100%{opacity:1}50%{opacity:.998}}
+body{animation:flicker 8s infinite}
+.start-card{background:#111;border-radius:16px;padding:36px 24px 32px;text-align:center;border:1px solid rgba(0,255,65,.15);box-shadow:0 0 40px rgba(0,255,65,.04),inset 0 1px 0 rgba(0,255,65,.06);position:relative;overflow:hidden}
+.start-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,#00ff41,transparent)}
+.start-icon{width:80px;height:80px;border:2px solid #00ff41;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 20px;font-size:34px;box-shadow:0 0 30px rgba(0,255,65,.12),inset 0 0 30px rgba(0,255,65,.04)}
+.start-card h1{font-size:20px;font-weight:700;margin-bottom:10px;color:#f0f0f0;letter-spacing:.5px}
+.start-card .sub{color:#888;font-size:13px;margin-bottom:4px;line-height:1.6}
+.start-card .info{color:#555;font-size:12px;margin-bottom:28px;border-top:1px solid rgba(0,255,65,.08);padding-top:16px;margin-top:12px}
+.term-line{color:#00ff41;font-size:12px;margin-bottom:8px;opacity:.7}
+.term-line span{color:#888}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+.blink{animation:blink 1s step-end infinite}
+.btn-primary{background:transparent;border:1px solid #00ff41;color:#00ff41;font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:600;padding:13px 32px;border-radius:8px;cursor:pointer;transition:all .25s;width:100%;max-width:260px;margin:0 auto;text-transform:uppercase;letter-spacing:2px;position:relative;overflow:hidden}
+.btn-primary:hover{background:rgba(0,255,65,.06);box-shadow:0 0 25px rgba(0,255,65,.1)}
+.btn-primary:active{transform:scale(.96)}
+.test-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:2px;padding:0 4px}
+.test-header .counter{font-size:12px;font-weight:500;color:#666;letter-spacing:.5px}
+.test-header .q-id{font-size:12px;font-weight:500;color:#00ff41;opacity:.6}
+.progress-wrap{width:100%;height:3px;background:#1a1a1a;border-radius:2px;overflow:hidden;margin-bottom:16px}
+.progress-bar{height:100%;background:#00ff41;border-radius:2px;transition:width .35s ease;width:0%;box-shadow:0 0 8px rgba(0,255,65,.3)}
+.question-card{background:#111;border-radius:12px;padding:24px 20px;border:1px solid rgba(0,255,65,.1);box-shadow:0 0 30px rgba(0,255,65,.02)}
+.question-number{font-size:11px;font-weight:600;color:#00ff41;margin-bottom:14px;letter-spacing:1px;opacity:.7}
+.question-text{font-size:15px;font-weight:400;line-height:1.6;margin-bottom:20px;color:#d0d0d0}
+.options{display:flex;flex-direction:column;gap:8px}
+.option{background:#0d0d0d;border:1px solid rgba(0,255,65,.12);border-radius:8px;padding:13px 16px;font-size:13px;line-height:1.5;color:#aaa;cursor:pointer;transition:all .2s;text-align:left;width:100%;font-family:'JetBrains Mono',monospace}
+.option:active{transform:scale(.98)}
+.option.selected{border-color:#00ff41;background:rgba(0,255,65,.06);color:#e0e0e0;box-shadow:0 0 20px rgba(0,255,65,.06)}
+.option.disabled{pointer-events:none}
+.footer-btn{margin-top:2px}
+.btn-next{background:transparent;border:1px solid rgba(0,255,65,.2);color:#00ff41;font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:600;padding:13px 0;border-radius:8px;cursor:pointer;transition:all .25s;width:100%;text-transform:uppercase;letter-spacing:2px}
+.btn-next:active{transform:scale(.97)}
+.btn-next:disabled{opacity:.15;cursor:not-allowed;transform:none;border-color:rgba(255,255,255,.05);color:#555}
+.btn-next:not(:disabled):hover{background:rgba(0,255,65,.06);box-shadow:0 0 25px rgba(0,255,65,.08);border-color:#00ff41}
+.results-card{background:#111;border-radius:16px;padding:36px 24px 32px;text-align:center;border:1px solid rgba(0,255,65,.15);box-shadow:0 0 40px rgba(0,255,65,.04),inset 0 1px 0 rgba(0,255,65,.06);position:relative;overflow:hidden}
+.results-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,#00ff41,transparent)}
+.results-icon{font-size:44px;margin-bottom:8px;filter:grayscale(.3)}
+.results-card h2{font-size:16px;font-weight:700;margin-bottom:20px;color:#aaa;letter-spacing:2px;text-transform:uppercase}
+.score-circle{width:110px;height:110px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 14px;font-size:28px;font-weight:700;border:2px solid rgba(0,255,65,.3);background:rgba(0,255,65,.04);color:#00ff41;font-family:'JetBrains Mono',monospace;flex-direction:column;gap:2px}
+.score-circle small{font-size:11px;font-weight:400;color:#666;letter-spacing:1px}
+.score-detail{font-size:13px;color:#666;margin-bottom:4px}
+.score-detail strong{color:#aaa}
+.msg{font-size:13px;font-weight:400;margin:16px 0 24px;line-height:1.6;padding:14px;border-radius:8px;background:#0a0a0a;border:1px solid rgba(0,255,65,.08);color:#888}
+.btn-restart{background:transparent;border:1px solid rgba(0,255,65,.2);color:#00ff41;font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:600;padding:13px 32px;border-radius:8px;cursor:pointer;transition:all .25s;width:100%;max-width:260px;text-transform:uppercase;letter-spacing:2px}
+.btn-restart:active{transform:scale(.96)}
+.btn-restart:hover{background:rgba(0,255,65,.06);box-shadow:0 0 25px rgba(0,255,65,.08);border-color:#00ff41}
+</style>
+</head>
+<body>
+<div id="app">
+<div class="screen active" id="screen-start">
+<div class="start-card">
+<div class="start-icon">⎔</div>
+<div class="term-line">root@test:~$ <span>./komputer-testi</span><span class="blink">▊</span></div>
+<h1>Компьютерлік желілер тесті</h1>
+<p class="sub">60 сұрақ, 4 нұсқа, 1 дұрыс жауап.</p>
+<p class="info">Жүйе дайын. Тестті бастау үшін төмендегі батырманы басыңыз.</p>
+<button class="btn-primary" id="btn-start">[ Тестті бастау ]</button>
+</div>
+</div>
+<div class="screen" id="screen-test">
+<div class="test-header">
+<span class="counter" id="counter">Сұрақ: 1 / 60</span>
+<span class="q-id" id="q-id">№1</span>
+</div>
+<div class="progress-wrap"><div class="progress-bar" id="progress-bar"></div></div>
+<div class="question-card">
+<div class="question-number" id="q-number">⟡ СҰРАҚ №1</div>
+<div class="question-text" id="q-text"></div>
+<div class="options" id="options"></div>
+</div>
+<div class="footer-btn">
+<button class="btn-next" id="btn-next" disabled>[ Келесі сұрақ ]</button>
+</div>
+</div>
+<div class="screen" id="screen-results">
+<div class="results-card">
+<div class="results-icon" id="results-icon">⬡</div>
+<h2>Тест аяқталды</h2>
+<div class="score-circle" id="score-circle">0<small>/ 60</small></div>
+<p class="score-detail">Нәтиже: <strong id="score-text">0 / 60</strong></p>
+<p class="score-detail" id="percent-text">0%</p>
+<div class="msg" id="msg">...</div>
+<button class="btn-restart" id="btn-restart">[ Қайтадан бастау ]</button>
+</div>
+</div>
+</div>
+<script>
+const questions=[
+{q:"Компьютерлік желі дегеніміз не?",o:["A) Тек бір бөлмедегі компьютерлер жиынтығы","B) Ақпарат пен ресурстарды ортақ пайдалану үшін біріктірілген компьютерлер жүйесі","C) Компьютердің ішкі құрылғыларының байланысы","D) Интернетке қосылуға арналған бағдарлама"],a:1},
+{q:"Географиялық қамту аумағы бойынша ең кіші желі түрін анықтаңыз:",o:["A) WAN","B) MAN","C) LAN","D) GAN"],a:2},
+{q:"Бір қала немесе аймақ шегіндегі мекемелерді біріктіретін желі қалай аталады?",o:["A) LAN","B) MAN","C) WAN","D) PAN"],a:1},
+{q:"Компьютерді желілік кабельге қосуға арналған негізгі ішкі аппараттық компонент:",o:["A) Желілік адаптер (NIC)","B) Орталық процессор (CPU)","C) Жедел жады (RAM)","D) Бейнекарта (GPU)"],a:0},
+{q:"Мәліметтерді тек қабылдаушы порттан басқа барлық порттарға көшіріп тарататын (Broadcast) ескірген құрылғы:",o:["A) Коммутатор (Switch)","B) Маршрутизатор (Router)","C) Хаб (Hub)","D) Шлюз (Gateway)"],a:2},
+{q:"Каналдар деңгейінде (Data Link) жұмыс істейтін және пакеттерді тек тиісті MAC-адреске бағыттайтын ақылды құрылғы:",o:["A) Хаб","B) Коммутатор (Switch)","C) Репитер","D) Модем"],a:1},
+{q:"OSI моделінің 3-деңгейінде (Желілік) жұмыс істейтін және әртүрлі желілер арасында маршрут құратын құрылғы:",o:["A) Коммутатор","B) Маршрутизатор (Router)","C) Концентратор","D) Көпір (Bridge)"],a:1},
+{q:"Коаксиалды кабельдің ұштарына сигналдың шағылысуын болдырмау үшін қойылатын құрылғы:",o:["A) BNC Т-коннектор","B) BNC терминатор","C) RJ-45 қосқышы","D) SFP модуль"],a:1},
+{q:"Коаксиалды кабельді желілік картаға немесе Т-коннекторға тікелей жалғау үшін қолданылатын негізгі қосқыш:",o:["A) RJ-11","B) BNC баррель-коннектор","C) BNC коннектор","D) Нарықтық розетка"],a:2},
+{q:"Желі арқылы деректерді берудің тек бір бағытта ғана жүру режимі қалай аталады?",o:["A) Duplex","B) Half-duplex","C) Simplex","D) Full-duplex"],a:2},
+{q:"Рацияның жұмыс принципі сияқты, деректерді кезекпен екі бағытта да бере алатын режим:",o:["A) Simplex","B) Half-duplex","C) Full-duplex","D) Multiplex"],a:1},
+{q:"Деректерді бір уақытта екі бағытта да жібере және қабылдай алатын қазіргі заманғы режим:",o:["A) Simplex","B) Half-duplex","C) Full-duplex","D) Asynchronous"],a:2},
+{q:"TCP/IP стегінде қолданылатын физикалық (аппараттық) адрес қалай аталады?",o:["A) IP-адрес","B) URL-адрес","C) MAC-адрес","D) Порт нөмірі"],a:2},
+{q:"MAC-адрестің ұзындығы қанша биттен тұрады?",o:["A) 32 бит","B) 48 бит","C) 64 бит","D) 128 бит"],a:1},
+{q:"IPv4 адресінің ұзындығы қанша битті құрайды?",o:["A) 16 бит","B) 32 бит","C) 48 бит","D) 128 бит"],a:1},
+{q:"OSI моделі неше деңгейден тұрады?",o:["A) 4","B) 5","C) 7","D) 9"],a:2},
+{q:"OSI моделінің ең төменгі бірінші деңгейін атаңыз:",o:["A) Каналдық (Data Link)","B) Желілік (Network)","C) Физикалық (Physical)","D) Көліктік (Transport)"],a:2},
+{q:"IP-маршруттау және мекенжайларды анықтау OSI моделінің қай деңгейінде орындалады?",o:["A) Физикалық","B) Желілік","C) Сеанстық","D) Қолданбалы"],a:1},
+{q:"Төмендегі хаттамалардың (протокол) қайсысы сенімді байланыс орнатуға жауапты көліктік хаттама болып табылады?",o:["A) IP","B) UDP","C) TCP","D) ICMP"],a:2},
+{q:"IPv4 мекенжайларының А класына жататын алғашқы октет диапазонын анықтаңыз:",o:["A) 1–126","B) 128–191","C) 192–223","D) 224–239"],a:0},
+{q:"192.168.1.5 адресі IP мекенжайларының қай класына жатады?",o:["A) А класы","B) В класы","C) С класы","D) D класы"],a:2},
+{q:"С класының әдепкі (default) ішкі желі маскасы қандай?",o:["A) 255.0.0.0","B) 255.255.0.0","C) 255.255.255.0","D) 255.255.255.255"],a:2},
+{q:"Желіні кішігірім ішкі желілерге бөлу процесі қалай аталады?",o:["A) Routing","B) Subnetting","C) Encapsulation","D) Switching"],a:1},
+{q:"Иерархиялық құрылымдағы орталық бір коммутаторға басқа коммутаторлар мен компьютерлер тармақталып қосылатын топология:",o:["A) Шина (Bus)","B) Сақина (Ring)","C) Ағаш тәрізді (Tree)","D) Толық торлы (Mesh)"],a:2},
+{q:"Желідегі барлық компьютерлер бір-бірімен тікелей кабель арқылы жалғанатын ең сенімді топология:",o:["A) Жұлдыз","B) Толық торлы (Mesh)","C) Сақина","D) Шина"],a:1},
+{q:"Барлық жұмыс станциялары орталық бір құрылғыға (коммутаторға) жеке кабельмен қосылатын топология:",o:["A) Жұлдыз (Star)","B) Шина","C) Сақина","D) Аралас"],a:0},
+{q:"Екі немесе одан да көп әртүрлі топологиялардың (мысалы, жұлдыз бен шина) бірігуінен пайда болатын топология:",o:["A) Торлы","B) Аралас (Hybrid)","C) Ағаш","D) Шеңберлі"],a:1},
+{q:"Жергілікті желілерде (LAN) ең кең таралған кабельдік технология:",o:["A) Token Ring","B) FDDI","C) Ethernet","D) ATM"],a:2},
+{q:"100BASE-TX стандартындағы '100' саны нені білдіреді?",o:["A) Максималды қашықтық 100 метр","B) Деректерді беру жылдамдығы 100 Мбит/с","C) Кабельдің кедергісі 100 Ом","D) Максималды хосттар саны 100"],a:1},
+{q:"Есілген жұп (Twisted Pair) кабелін қысудың T568B стандарты қай түспен басталады?",o:["A) Жасыл-ақ","B) Қызғылт сары-ақ","C) Көк-ақ","D) Қоңыр-ақ"],a:1},
+{q:"Компьютер-компьютер (бірдей құрылғылар) арасында тікелей байланыс орнату үшін қандай кабель түрі қысылады?",o:["A) Тікелей (Straight-through)","B) Айқас (Cross-over)","C) Консольдік (Rollover)","D) Оптикалық"],a:1},
+{q:"Түрлі желілік архитектурасы мен хаттамалары бар желілерді өзара байланыстыратын бағдарламалық-аппараттық кешен:",o:["A) Көпір","B) Шлюз (Gateway)","C) Репитер","D) Хаб"],a:1},
+{q:"Cisco Packet Tracer бағдарламасы не үшін қолданылады?",o:["A) Мәтіндік құжаттарды өңдеу үшін","B) Желілік топологияларды модельдеу және баптау үшін","C) Компьютерді вирустардан қорғау үшін","D) Видео монтаждау үшін"],a:1},
+{q:"Компьютерлік желідегі файлдарға, папкаларға немесе принтерлерге бірнеше пайдаланушының бір уақытта қол жеткізуін ұйымдастыру:",o:["A) Деректерді шифрлау","B) Ортақ қол жеткізу (Shared Access)","C) Маршруттау","D) Домендеу"],a:1},
+{q:"Желілік басып шығарғышқа (Принтер) тек құжаттарды басып шығаруға рұқсат беріп, оның баптауларын өзгертуге тыйым салатын құқық деңгейі:",o:["A) Толық рұқсат (Full Control)","B) Өзгерту (Modify)","C) Басып шығару/Оқу (Print/Read)","D) Әкімшілік рұқсат"],a:2},
+{q:"Төмендегі IP адрестердің қайсысы жеке (Private / ішкі) желілерге арналған жабық адрес болып табылады?",o:["A) 8.8.8.8","B) 192.168.1.10","C) 200.100.50.4","D) 13.55.77.99"],a:1},
+{q:"Компьютердің IP мекенжайын автоматты түрде (динамикалық) үлестіретін хаттама:",o:["A) DNS","B) DHCP","C) FTP","D) SMTP"],a:1},
+{q:"Домендік атауларды (мысалы, google.com) IP мекенжайға түрлендіретін қызмет:",o:["A) DHCP","B) FTP","C) DNS","D) NAT"],a:2},
+{q:"Windows ОЖ-де компьютердің желілік баптауларын (IP, маска, шлюз) көруге арналған команда:",o:["A) ping","B) ipconfig","C) tracert","D) netstat"],a:1},
+{q:"Желідегі белгілі бір хостпен байланыстың бар-жоғын тексеруге арналған ең негізгі ICMP командасы:",o:["A) tracert","B) nslookup","C) ping","D) arp"],a:2},
+{q:"Пакеттің мақсатты компьютерге жеткенге дейінгі жүріп өткен барлық маршрутизаторларын (хоптарын) көрсететін команда:",o:["A) ipconfig","B) ping","C) tracert","D) route"],a:2},
+{q:"Біррангілі (Peer-to-Peer) желілік архитектураның басты ерекшелігі:",o:["A) Барлық компьютерлердің құқықтары тең және орталық сервер болмайды","B) Барлық басқару жұмысы бір орталық қуатты серверде орындалады","C) Тек сымсыз байланысты қолданады","D) Тек ғаламдық желілерде қолданылады"],a:0},
+{q:"Ғаламдық желілерді модельдеу кезінде бірнеше маршрутизатор арасындағы ең тиімді жолды автоматты түрде таңдайтын хаттамалар тобы:",o:["A) Статикалық маршруттау","B) Динамикалық маршруттау хаттамалары (RIP, OSPF)","C) IP-адрестеу","D) Коммутация хаттамалары"],a:1},
+{q:"Деректерді тасымалдау кезінде қателіктерді тексеретін және ретімен жинайтын OSI моделінің деңгейі:",o:["A) Физикалық","B) Көліктік (Transport)","C) Желілік","D) Каналдық"],a:1},
+{q:"Желілік коммутатор өзінің жұмысын желілік карталардың қандай адрестеріне негізделіп жүргізеді?",o:["A) IP-адрес","B) MAC-адрес","C) Порт нөмірі","D) Хост аты"],a:1},
+{q:"10.0.0.0 желісінің әдепкі маскасы /8 (255.0.0.0). Егер оны 255.255.0.0 (/16) қылып өзгертсек, бұл не ишара білдіреді?",o:["A) Желі ішкі желілерге бөлінді","B) Хосттар саны көбейді","C) Класс деңгейі төмендеді","D) Желі сымсыз форматқа өтті"],a:0},
+{q:"Ethernet желісінде коллизияны (сигналдардың соқтығысуын) анықтау және реттеу үшін қандай әдіс қолданылады?",o:["A) Token Passing","B) CSMA/CD","C) Polling","D) CSMA/CA"],a:1},
+{q:"Иірімді жұп кабельдерін компьютер мен коммутатор арасында жалғау үшін қолданылатын стандартты пластик коннектор:",o:["A) BNC","B) RJ-45","C) RJ-11","D) SC"],a:1},
+{q:"Төмендегі адрестердің қайсысы кеңтаралымдық (Broadcast) адрес болып табылады (Маска 255.255.255.0 болғанда)?",o:["A) 192.168.1.0","B) 192.168.1.1","C) 192.168.1.255","D) 192.168.1.100"],a:2},
+{q:"IP адрестің құрамындағы екі негізгі бөлік қандай?",o:["A) Компьютер аты және Пайдаланушы аты","B) Желі адресі (Network ID) және Хост адресі (Host ID)","C) MAC-адрес және Порт нөмірі","D) Браузер аты және Провайдер аты"],a:1},
+{q:"Пакеттің тақырыбындағы (Header) баратын жердің IP-адресін оқып, оны сыртқы желіге бағыттайтын компьютер баптауындағы параметр:",o:["A) Ішкі желі маскасы","B) Әдепкі шлюз (Default Gateway)","C) DNS сервер","D) DHCP ауқымы"],a:1},
+{q:"Клиент-сервер архитектурасының біррангілі желіден басты артықшылығы:",o:["A) Құрылғылардың арзан болуы","B) Орталықтандырылған басқару және жоғары қауіпсіздік","C) Баптаудың қарапайымдылығы","D) Сервердің қажет еместігі"],a:1},
+{q:"Ішкі желі маскасы 255.255.255.240 болатын желіде бір ішкі желіде ең көп дегенде неше пайдалануға болатын хост (IP) болады?",o:["A) 14","B) 16","C) 30","D) 62"],a:0},
+{q:"TCP/IP моделінің қолданбалы (Application) деңгейінің хаттамасын анықтаңыз:",o:["A) IP","B) TCP","C) HTTP","D) UDP"],a:2},
+{q:"Кабельді экрандау (Shielding) технологиясы желіге қалай әсер етеді?",o:["A) Желінің қашықтығын азайтады","B) Сыртқы электромагниттік кедергілерден (бөгеілдерден) қорғайды","C) Кабельдің бағасын арзандатады","D) Деректерді сымсыз беруге мүмкіндік береді"],a:1},
+{q:"IP-адрестердің қай класы тек ғылыми-тәжірибелік және резервтегі мақсаттар үшін сақталып қойылған?",o:["A) А класы","B) С класы","C) D класы","D) E класы"],a:3},
+{q:"Компьютер өздігінен желідегі басқа хосттардың MAC-адресін білу үшін қолданатын хаттама:",o:["A) ARP","B) DHCP","C) DNS","D) ICMP"],a:0},
+{q:"Cisco Packet Tracer-де жасалған желіде пакеттердің нақты уақыт режимінде қадам бойынша қозғалысын көруге мүмкіндік беретін режим:",o:["A) Realtime","B) Simulation","C) Design","D) Physical"],a:1},
+{q:"Желідегі деректер пакеті (PDU) Каналдық деңгейде қалай аталады?",o:["A) Сегмент (Segment)","B) Пакет (Packet)","C) Кадр немесе Фрейм (Frame)","D) Бит (Bit)"],a:2},
+{q:"127.0.0.1 IP мекенжайы не үшін қолданылады?",o:["A) Желідегі басты серверге қосылу үшін","B) Компьютердің өзін-өзі (желілік стек жұмысын) тексеру үшін (Loopback)","C) Провайдерге хабарласу үшін","D) Сымсыз желіні іске қосу үшін"],a:1}
+];
+let cur=0,answers=new Array(60).fill(null);
+const $=id=>document.getElementById(id);
+const screens={start:$('screen-start'),test:$('screen-test'),results:$('screen-results')};
+function show(s){Object.values(screens).forEach(s=>s.classList.remove('active'));screens[s].classList.add('active')}
+$('btn-start').addEventListener('click',()=>{show('test');render()});
+$('btn-next').addEventListener('click',()=>{
+if(answers[cur]===null)return;
+if(cur===59){show('results');renderResults();return}
+cur++;render()
+});
+$('btn-restart').addEventListener('click',()=>{cur=0;answers=new Array(60).fill(null);show('start')});
+function render(){
+$('counter').textContent=`Сұрақ: ${cur+1} / 60`;
+$('q-id').textContent=`№${cur+1}`;
+$('progress-bar').style.width=`${((cur+1)/60)*100}%`;
+$('q-number').textContent=`⟡ СҰРАҚ №${cur+1}`;
+const q=questions[cur];
+$('q-text').textContent=q.q;
+$('options').innerHTML=q.o.map((opt,i)=>{
+const sel=answers[cur]===i?'selected':'';
+return`<button class="option ${sel}" data-i="${i}">${opt}</button>`
+}).join('');
+document.querySelectorAll('.option').forEach(btn=>{
+btn.addEventListener('click',()=>{
+if(answers[cur]!==null)return;
+const i=+btn.dataset.i;
+answers[cur]=i;
+document.querySelectorAll('.option').forEach(b=>b.classList.remove('selected'));
+btn.classList.add('selected');
+$('btn-next').disabled=false;
+})
+});
+$('btn-next').disabled=answers[cur]===null
+}
+function renderResults(){
+const correct=answers.filter((a,i)=>a===questions[i].a).length;
+const pct=Math.round((correct/60)*100);
+$('score-circle').innerHTML=`${correct}<small>/ 60</small>`;
+$('score-text').textContent=`${correct} / 60`;
+$('percent-text').textContent=`${pct}%`;
+let icon,msg;
+if(pct>=90){icon='⬡';msg='Өте жақсы! Сіз компьютерлік желілерді жетік меңгергенсіз.'}
+else if(pct>=70){icon='◈';msg='Жақсы нәтиже! Біліміңізді одан әрі жетілдіре аласыз.'}
+else if(pct>=50){icon='◇';msg='Қанағаттанарлық. Қайталап өтуді ұсынамыз.'}
+else{icon='○';msg='Көбірек оқып, дайындалуыңызды ұсынамыз.'}
+$('results-icon').textContent=icon;
+$('msg').textContent=msg
+}
+</script>
+</body>
+</html>
